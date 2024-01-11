@@ -1,0 +1,12 @@
+.DS_Store
+.idea
+.vscode
+node_modules/
+dist/
+coverage/
+npm-debug.log
+tsconfig.tsbuildinfo
+pnpm-debug.log
+temp/
+.temp
+.cache
