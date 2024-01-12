@@ -5,6 +5,7 @@ import METADATA_KEY from './metadata-key';
 import type { EntityOptions } from 'typeorm';
 
 /**
+ * Define an entity model.
  * @decorator {class}
  * @param entityOpts
  */
@@ -23,15 +24,17 @@ export function EntityModel(entityOpts?: EntityOptions) {
 }
 
 /**
+ * Inject a repository.
  * @decorator {property}
+ * @decorator {parameter} Can only be used on constructor parameters.
  * @param entity
  * @param connectionName
  */
 export function InjectRepository(entity: Newable, connectionName = 'default') {
-  return function (target, propertyKey: string) {
+  return function (target, propertyKey: string, parameterIndex?: number) {
     const identifier = entity;
-    inject(identifier)(target, propertyKey);
-    tagged('bwcx:plugin:typeorm:tag:ConnectionName', connectionName)(target, propertyKey);
+    inject(identifier)(target, propertyKey, parameterIndex);
+    tagged('bwcx:plugin:typeorm:tag:ConnectionName', connectionName)(target, propertyKey, parameterIndex);
   };
 }
 
