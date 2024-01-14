@@ -3,6 +3,7 @@ import { inject, tagged } from 'inversify';
 import { BwcxTypeormPlugin } from './plugin';
 import METADATA_KEY from './metadata-key';
 import type { EntityOptions } from 'typeorm';
+import type { BwcxTypeormEntityModelMetadata } from './interfaces';
 
 /**
  * Define an entity model.
@@ -11,8 +12,9 @@ import type { EntityOptions } from 'typeorm';
  */
 export function EntityModel(entityOpts?: EntityOptions) {
   return function (target) {
-    const lastEntityModels = Reflect.getMetadata(METADATA_KEY.EntityModel, BwcxTypeormPlugin) || [];
-    const entityModels = [
+    const lastEntityModels: BwcxTypeormEntityModelMetadata[] =
+      Reflect.getMetadata(METADATA_KEY.EntityModel, BwcxTypeormPlugin) || [];
+    const entityModels: BwcxTypeormEntityModelMetadata[] = [
       ...lastEntityModels,
       {
         target,
