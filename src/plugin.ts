@@ -3,7 +3,7 @@ import type { IBwcxPlugin } from 'bwcx-ljsm';
 import { InjectContainer } from 'bwcx-core';
 import type { Container } from 'bwcx-core';
 import { createConnections } from 'typeorm';
-import type { ConnectionOptions } from 'typeorm';
+import type { ConnectionOptions, Connection } from 'typeorm';
 import CONTAINER_KEY from './container-key';
 import { getAndApplyEntityModels } from './utils';
 
@@ -47,7 +47,7 @@ export class BwcxTypeormPlugin implements IBwcxPlugin {
   }
 
   public async beforeExit() {
-    const connections = this.container.getAll<any>(CONTAINER_KEY.Connection);
+    const connections = this.container.getAll<Connection>(CONTAINER_KEY.Connection);
     for (const connection of connections) {
       await connection.close();
     }
