@@ -2,10 +2,10 @@ import { Plugin } from 'bwcx-ljsm';
 import type { IBwcxPlugin } from 'bwcx-ljsm';
 import { InjectContainer } from 'bwcx-core';
 import type { Container } from 'bwcx-core';
-import { Entity, createConnections } from 'typeorm';
+import { createConnections } from 'typeorm';
 import type { ConnectionOptions } from 'typeorm';
 import CONTAINER_KEY from './container-key';
-import METADATA_KEY from './metadata-key';
+import { getAndApplyEntityModels } from './utils';
 
 export interface IBwcxTypeormConfig {
   /**
@@ -20,20 +20,17 @@ export class BwcxTypeormPlugin implements IBwcxPlugin {
   container: Container;
 
   public async onActivate(config: IBwcxTypeormConfig) {
-    const entityModels = Reflect.getMetadata(METADATA_KEY.EntityModel, this.constructor) || [];
-    for (const entity of entityModels) {
-      const { target, options } = entity;
-      // Apply TypeORM @Entity()
-      Entity(options)(target);
-    }
-
+    const entityModels = getAndApplyEntityModels();
     const connectionOptions = config.connectionOptions;
     const connections = await createConnections(connectionOptions);
     for (const connection of connections) {
       if (this.container.isBoundNamed(CONTAINER_KEY.Connection, connection.name || 'default')) {
         throw new Error(`Duplicated connection name: ${connection.name}`);
       }
-      this.container.bind(CONTAINER_KEY.Connection).toConstantValue(connection).whenTargetNamed(connection.name || 'default');
+      this.container
+        .bind(CONTAINER_KEY.Connection)
+        .toConstantValue(connection)
+        .whenTargetNamed(connection.name || 'default');
     }
     for (const entity of entityModels) {
       const { target, options } = entity;
